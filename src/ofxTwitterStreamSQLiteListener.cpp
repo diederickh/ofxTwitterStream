@@ -39,18 +39,28 @@ void ofxTwitterStreamSQLiteListener::onTweet(ofxTwitterStreamTweet &rTweet) {
 	}
 }
 
-
 ofxTwitterStreamTweet ofxTwitterStreamSQLiteListener::getNextTweet() {
-	ofxSQLiteSelect sel = sqlite.select("text, id")
+	ofxSQLiteSelect sel = sqlite.select("text, id, screen_name")
 		.from("tweets")
 		.whereNull("date_used")
 		.limit(1)
 		.order("date_inserted", "asc")
 		.execute().begin();
 	ofxTwitterStreamTweet tweet;
-	tweet.text = sel.getString();
-	tweet.id = sel.getString();
+	tweet.text = sel.getString(0);
+	tweet.id = sel.getString(1);
+	tweet.user.screen_name = sel.getString(2);
 	return tweet;
+}
+
+bool ofxTwitterStreamSQLiteListener::hasNextTweet() {
+	ofxSQLiteSelect sel = sqlite.select("id")
+		.from("tweets")
+		.whereNull("date_used")
+		.limit(1)
+		.order("date_inserted", "asc")
+		.execute().begin();
+	return sel.hasRow();
 }
 
 void ofxTwitterStreamSQLiteListener::markTweetAsUsed(std::string nID) {
@@ -58,4 +68,26 @@ void ofxTwitterStreamSQLiteListener::markTweetAsUsed(std::string nID) {
 		.use("date_used", ofxSQLiteTypeNow())
 		.where("id", nID)
 		.execute();
+	
+}
+
+ofxTwitterStreamTweet ofxTwitterStreamSQLiteListener::getRandomTweet() {
+	ofxSQLiteSelect sel = sqlite.select("text, id, screen_name")
+		.from("tweets")
+		.limit(1)
+		.order("random()")
+		.execute().begin();
+	ofxTwitterStreamTweet tweet;
+	tweet.text = sel.getString(0);
+	tweet.id = sel.getString(1);
+	tweet.user.screen_name = sel.getString(2);
+	return tweet;
+}
+
+bool ofxTwitterStreamSQLiteListener::hasTweets() {
+	ofxSQLiteSelect sel = sqlite.select("id")
+		.from("tweets")
+		.limit(1)
+		.execute().begin();
+	return sel.hasRow();
 }
