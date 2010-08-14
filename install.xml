@@ -6,7 +6,7 @@
 	<url></url>
 	<add>
 		<include>
-			<path></path>
+			<path>..\..\..\addons_diederick\ofxTwitterStream\src</path>
 		</include>
 	</add>
 </install>
