@@ -27,13 +27,13 @@ void ofxTwitterStreamSQLiteListener::createDB() {
 void ofxTwitterStreamSQLiteListener::onTweet(ofxTwitterStreamTweet &rTweet) {
 	if(rTweet.text == "")
 		return;
-	
+
 	int result = sqlite.insert("tweets")
 			.use("text", rTweet.text)
 			.use("screen_name",rTweet.user.screen_name)
 			.use("profile_image_url", rTweet.user.profile_image_url)
 			.use("created_at", rTweet.created_at)
-		.execute();	
+		.execute();
 	if(result != SQLITE_OK) {
 		std::cout << "ERROR: cannot insert tweet: " << rTweet.text << std::endl;
 	}
@@ -68,7 +68,7 @@ void ofxTwitterStreamSQLiteListener::markTweetAsUsed(std::string nID) {
 		.use("date_used", ofxSQLiteTypeNow())
 		.where("id", nID)
 		.execute();
-	
+
 }
 
 ofxTwitterStreamTweet ofxTwitterStreamSQLiteListener::getRandomTweet() {
