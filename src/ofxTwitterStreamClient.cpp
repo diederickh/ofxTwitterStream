@@ -18,7 +18,7 @@ ofxTwitterStreamClient::ofxTwitterStreamClient(
 	,username(sUser)
 	,password(sPassword)
 {
-	cout << "Creating client\n";
+	cout << "Creating ofxTwitterStream client\n";
 
 	event_manager = new ofxTwitterStreamEventManager(this);
 }
@@ -30,7 +30,7 @@ void ofxTwitterStreamClient::connect() {
 	std::ostream request_stream(&request);
 	request_stream << "GET " << path << " HTTP/1.0\r\n";
 	request_stream << "Host: " << server << "\r\n";
-	request_stream << "User-Agent: test_with_stream\r\n";
+	request_stream << "User-Agent: ofxTwitterStream\r\n";
 	request_stream << "Accept:*/*\r\n";
 	request_stream << "Authorization: Basic " << encoded << "\r\n";
 	request_stream << "\r\n\r\n";

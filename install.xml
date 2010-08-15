@@ -1,6 +1,6 @@
 <install>
 	<name>ofxTwitterStream</name>
-	<version>0.01</version>
+	<version>0.02</version>
 	<author>Diederick Huijbers</author>
 	<requires>ofxThread, ofxJansson, ofxStringEncoders, ofxBoost</requires>
 	<url></url>
