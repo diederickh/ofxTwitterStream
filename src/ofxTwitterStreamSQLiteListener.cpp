@@ -40,7 +40,7 @@ void ofxTwitterStreamSQLiteListener::onTweet(ofxTwitterStreamTweet &rTweet) {
 }
 
 ofxTwitterStreamTweet ofxTwitterStreamSQLiteListener::getNextTweet() {
-	ofxSQLiteSelect sel = sqlite.select("text, id, screen_name")
+	ofxSQLiteSelect sel = sqlite.select("text, id, screen_name, profile_image_url")
 		.from("tweets")
 		.whereNull("date_used")
 		.limit(1)
@@ -50,6 +50,7 @@ ofxTwitterStreamTweet ofxTwitterStreamSQLiteListener::getNextTweet() {
 	tweet.text = sel.getString(0);
 	tweet.id = sel.getString(1);
 	tweet.user.screen_name = sel.getString(2);
+	tweet.user.profile_image_url = sel.getString(3);
 	return tweet;
 }
 
