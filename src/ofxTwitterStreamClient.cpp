@@ -17,6 +17,7 @@ ofxTwitterStreamClient::ofxTwitterStreamClient(
 	,event_manager(NULL)
 	,username(sUser)
 	,password(sPassword)
+	,application_name("ofxTwitterStream")
 {
 	cout << "Creating ofxTwitterStream client\n";
 
@@ -30,7 +31,7 @@ void ofxTwitterStreamClient::connect() {
 	std::ostream request_stream(&request);
 	request_stream << "GET " << path << " HTTP/1.0\r\n";
 	request_stream << "Host: " << server << "\r\n";
-	request_stream << "User-Agent: ofxTwitterStream: test app\r\n";
+	request_stream << "User-Agent: " << application_name << " \r\n";
 	request_stream << "Accept:*/*\r\n";
 	request_stream << "Authorization: Basic " << encoded << "\r\n";
 	request_stream << "\r\n\r\n";
@@ -269,4 +270,13 @@ void ofxTwitterStreamClient::notifyTweet(
 )
 {
 	event_manager->notifyTweet(rTweet);
+}
+
+void ofxTwitterStreamClient::setApplicationName(std::string sName) {
+	application_name = sName;
+}
+
+
+std::string ofxTwitterStreamClient::getApplicationName() {
+	return application_name;
 }

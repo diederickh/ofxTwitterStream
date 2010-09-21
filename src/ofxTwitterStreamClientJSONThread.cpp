@@ -18,3 +18,6 @@ void ofxTwitterStreamClientJSONThread::threadedFunction() {
 }
 
 
+ofxTwitterStreamClientJSON* ofxTwitterStreamClientJSONThread::getClient() {
+	return client;
+}

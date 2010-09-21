@@ -85,6 +85,10 @@ class ofxTwitterStreamClient {
 		void notifyTweet(
 			ofxTwitterStreamTweet& rTweet
 		);
+		
+		void setApplicationName(std::string sName);
+
+		std::string getApplicationName();
 
 
 	protected:
@@ -97,6 +101,7 @@ class ofxTwitterStreamClient {
 		const string path;
 		const string username;
 		const string password;
+		std::string application_name;
 		ofxTwitterStreamEventManager* event_manager;
 
 

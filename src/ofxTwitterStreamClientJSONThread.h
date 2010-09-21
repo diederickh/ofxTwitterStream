@@ -17,6 +17,9 @@ public:
 		,const string sPassword
 	);
 
+	// Get the client which connects to the twitter server.
+	ofxTwitterStreamClientJSON* getClient();
+	
 	virtual void threadedFunction();
 	ofxTwitterStreamClientJSON* client;
 	boost::asio::io_service& io_service;
