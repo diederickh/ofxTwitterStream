@@ -73,7 +73,7 @@ void ofxTwitterStreamSQLiteListener::markTweetAsUsed(std::string nID) {
 }
 
 ofxTwitterStreamTweet ofxTwitterStreamSQLiteListener::getRandomTweet() {
-	ofxSQLiteSelect sel = sqlite.select("text, id, screen_name")
+	ofxSQLiteSelect sel = sqlite.select("text, id, screen_name, profile_image_url")
 		.from("tweets")
 		.limit(1)
 		.order("random()")
@@ -82,6 +82,7 @@ ofxTwitterStreamTweet ofxTwitterStreamSQLiteListener::getRandomTweet() {
 	tweet.text = sel.getString(0);
 	tweet.id = sel.getString(1);
 	tweet.user.screen_name = sel.getString(2);
+	tweet.user.profile_image_url = sel.getString(3);
 	return tweet;
 }
 
