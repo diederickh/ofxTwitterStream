@@ -93,3 +93,7 @@ bool ofxTwitterStreamSQLiteListener::hasTweets() {
 		.execute().begin();
 	return sel.hasRow();
 }
+
+ofxSQLite* ofxTwitterStreamSQLiteListener::getSQLite() {
+	return &sqlite;
+}

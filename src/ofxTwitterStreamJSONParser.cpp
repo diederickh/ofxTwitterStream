@@ -23,7 +23,7 @@ void ofxTwitterStreamJSONParser::onTweet(ofxTwitterStreamTweetRaw &rTweet) {
 	if(geo != "null") {
 		cout << geo << std::endl;
 	}
-	cout << rTweet.data << std::endl << std::endl;
+	//cout << rTweet.data << std::endl << std::endl;
 
 	// create and fill the ofxTwitterStreamTweet.
 	ofxTwitterStreamTweet tweet;
@@ -41,7 +41,7 @@ void ofxTwitterStreamJSONParser::onTweet(ofxTwitterStreamTweetRaw &rTweet) {
 	if(json_is_object(user)) {
 		tweet.user.profile_image_url = json.getValueS(user, "profile_image_url","");
 		tweet.user.screen_name = json.getValueS(user, "screen_name","");
-		std::cout << "Got IMAGE profile " << tweet.user.profile_image_url << std::endl;
+	//	std::cout << "Got IMAGE profile " << tweet.user.profile_image_url << std::endl;
 	}
 
 	tmp++;

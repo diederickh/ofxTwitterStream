@@ -25,6 +25,7 @@ public:
 	bool hasTweets();
 	bool hasNextTweet();
 	void markTweetAsUsed(std::string nID);
+	ofxSQLite* getSQLite();
 	ofxSQLite sqlite;
 };
 #endif

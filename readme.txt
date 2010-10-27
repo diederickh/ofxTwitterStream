@@ -7,6 +7,8 @@ Installation Windows (Code::Blocks)
 * ofxThread
 * ofxBoost
 * ofxStringEncoders
+* ofxJansson
+* ofxSQLite
 - Project > Build options > Search Paths, add this:
 ..\..\..\addons_diederick\ofxBoost\src\lib
 ..\..\..\addons_diederick\ofxStringEncoders\src\lib

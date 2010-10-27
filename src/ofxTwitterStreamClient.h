@@ -5,8 +5,6 @@
 
 //+++
 
-
-
 #include "ofMain.h"
 
 #undef check  // need to do this else boost won't compile on mac
