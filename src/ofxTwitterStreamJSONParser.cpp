@@ -45,7 +45,7 @@ void ofxTwitterStreamJSONParser::onTweet(ofxTwitterStreamTweetRaw &rTweet) {
 	}
 
 	tmp++;
-	cout << "Tweet.text - " << tweet.id << " - (" << tweet.created_at << "), (" << tmp << "): " << tweet.text << "\n";
+	//cout << "Tweet.text - " << tweet.id << " - (" << tweet.created_at << "), (" << tmp << "): " << tweet.text << "\n";
 	/*
 				" id INTEGER PRIMARY KEY AUTOINCREMENT" \
 			",text TEXT" \
