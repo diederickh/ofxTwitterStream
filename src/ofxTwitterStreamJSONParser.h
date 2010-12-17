@@ -14,6 +14,5 @@ public:
 	ofxTwitterStreamJSONParser();
 	virtual void onTweet(ofxTwitterStreamTweetRaw &rTweet);
 	ofxJansson json;
-	int tmp;
 };
 #endif

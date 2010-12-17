@@ -50,7 +50,56 @@ Representing:
 */
 
 #include <string>
+#include <vector>
+
 using namespace std;
+
+/*
+ "place": {
+        "country_code": "NL",
+        "place_type": "city",
+        "bounding_box": {
+            "type": "Polygon",
+            "coordinates": [
+                [
+                    [5.8955157, 50.8183644],
+                    [6.0263774, 50.8183644],
+                    [6.0263774, 50.936387],
+                    [5.8955157, 50.936387]
+                ]
+            ]
+        },
+        "attributes": {},
+        "full_name": "Heerlen, Limburg",
+        "name": "Heerlen",
+        "url": "http:\/\/api.twitter.com\/1\/geo\/id\/fec750e635427c4d.json",
+        "id": "fec750e635427c4d",
+        "country": "The Netherlands"
+    },
+
+*/
+
+struct ofxTwitterCoordinate {
+	double x;
+	double y;
+};
+
+struct ofxTwitterBoundingBox {
+	std::string	type;
+	std::vector<ofxTwitterCoordinate> coordinates;
+};
+
+struct ofxTwitterStreamPlace {
+	string country_code;
+	string place_type;
+	ofxTwitterBoundingBox bounding_box;
+	string full_name;
+	string name;
+	string url;
+	string id;
+	string country;
+};
+
 
 struct ofxTwitterStreamTweetUser {
 	bool notifications;
@@ -86,15 +135,16 @@ struct ofxTwitterStreamTweet {
 	int contributors;
 	string text;
 	bool favorited;
-	long in_reply_of_user_id;
+	long in_reply_to_user_id;
 	string source;
 	string created_at;
 	string coordinates;
 	string in_reply_to_screen_name;
-	string place;
+	ofxTwitterStreamPlace place;
 	ofxTwitterStreamTweetUser user;
 	bool truncated;
 	string id;
+	string id_str;
 	string geo;
 	long in_reply_to_status_id;
 };

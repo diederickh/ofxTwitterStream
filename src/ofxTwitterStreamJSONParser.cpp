@@ -2,7 +2,6 @@
 
 
 ofxTwitterStreamJSONParser::ofxTwitterStreamJSONParser() {
-	tmp = 0;
 }
 
 void ofxTwitterStreamJSONParser::onTweet(ofxTwitterStreamTweetRaw &rTweet) {
@@ -19,46 +18,79 @@ void ofxTwitterStreamJSONParser::onTweet(ofxTwitterStreamTweetRaw &rTweet) {
 
 		return;
 	}
-	string geo = json.getValueS(root, "geo","null");
-	if(geo != "null") {
-		cout << geo << std::endl;
-	}
-	//cout << rTweet.data << std::endl << std::endl;
-
-	// create and fill the ofxTwitterStreamTweet.
+	
+	// Create and fill the ofxTwitterStreamTweet.
 	ofxTwitterStreamTweet tweet;
-	tweet.id					= json.getValueS(root, "id", "");  // does not work, getValueI neither..
+	tweet.id_str				= json.getValueS(root, "id_str", "");  // does not work, getValueI neither..
 	tweet.text					= json.getValueS(root, "text", "");
 	tweet.favorited				= json.getValueB(root, "favorited", false);
 	tweet.contributors			= json.getValueI(root, "contributors",0);
-	tweet.in_reply_of_user_id	= json.getValueI(root, "in_reply_of_user_id", 0);
+	tweet.in_reply_to_user_id	= json.getValueI(root, "in_reply_to_user_id", 0);
 	tweet.created_at			= json.getValueS(root, "created_at","0");
 	tweet.geo					= json.getValueS(root, "geo","");
 
-
-	// get user specific data.
+	std::cout << "id: " << tweet.id_str << std::endl;
+	std::cout << "text: " << tweet.text << std::endl;
+	std::cout << "created_at: " << tweet.created_at << std::endl;
+	
+	// Get user specific data.
 	json_t* user = json_object_get(root, "user");
 	if(json_is_object(user)) {
-		tweet.user.profile_image_url = json.getValueS(user, "profile_image_url","");
-		tweet.user.screen_name = json.getValueS(user, "screen_name","");
-	//	std::cout << "Got IMAGE profile " << tweet.user.profile_image_url << std::endl;
+		tweet.user.profile_image_url	= json.getValueS(user, "profile_image_url","");
+		tweet.user.screen_name			= json.getValueS(user, "screen_name","");
+		tweet.user.geo_enabled			= json.getValueB(user, "geo_enabled",false);
+		tweet.user.lang					= json.getValueS(user, "lang", "");
+		tweet.user.time_zone			= json.getValueS(user, "time_zone","");
+		tweet.user.utc_offset			= json.getValueI(user, "utc_offset",0);
 	}
+		
+	// Get place information.
+	json_t* place = json_object_get(root, "place");
+	if(json_is_object(place)) {
+		tweet.place.country_code = json.getValueS(place, "country_code",	"");
+		tweet.place.place_type   = json.getValueS(place, "place_type",		"");
+		tweet.place.full_name	 = json.getValueS(place, "full_name",		"");
+		tweet.place.name		 = json.getValueS(place, "name",			"");
+		tweet.place.id			 = json.getValueS(place, "id",				"");
+		tweet.place.url			 = json.getValueS(place, "url",				"");
+		tweet.place.id			 = json.getValueS(place, "id",				"");
+		tweet.place.country		 = json.getValueS(place, "country",			"");
+		tweet.place.place_type	 = json.getValueS(place, "place_type",		"");				
+		std::cout << "place: " << tweet.place.name << std::endl;
+		
+		// Parse the bouding box.
+		ofxTwitterBoundingBox box;
+		json_t* bounding_box = json_object_get(place, "bounding_box");
+		if(json_is_object(bounding_box)) {
 
-	tmp++;
-	//cout << "Tweet.text - " << tweet.id << " - (" << tweet.created_at << "), (" << tmp << "): " << tweet.text << "\n";
-	/*
-				" id INTEGER PRIMARY KEY AUTOINCREMENT" \
-			",text TEXT" \
-			",tweet_id VARCHAR(255)" \
-			",user_name VARCHAR(255)" \
-			",geo VARCHAR(255)" \
-			",profile_image_url" \
-			",date_used DATETIME" \
-			",date_created DATETIME DEFAULT CURRENT_TIMESTAMP" \
-		");"
-	*/
+
+			json_t* coordinates = json_object_get(bounding_box, "coordinates");
+			if(json_is_array(coordinates)) {
+				unsigned int num_coord_groups = json_array_size(coordinates);
+				for(int i = 0; i < num_coord_groups; ++i) {
+					json_t* points = json_array_get(coordinates,i);
+					if(json_is_array(points)) {
+						unsigned int points_size = json_array_size(points);
+						for(int j = 0; j < points_size; ++j) {
+							json_t* point = json_array_get(points, j);
+							unsigned int coord_size = json_array_size(point);
+							if(coord_size == 2) {
+								ofxTwitterCoordinate twitter_coord;
+								twitter_coord.x = json_real_value(json_array_get(point,0));
+								twitter_coord.y = json_real_value(json_array_get(point,1));
+								tweet.place.bounding_box.coordinates.push_back(twitter_coord);
+							}
+						}
+					}
+				}
+			}
+		}
+		
+	}
 	client->notifyTweet(tweet);
 	json_decref(root);
+	
+	std::cout << "--------------------------------------" << std::endl;
 }
 
 /* Example data
@@ -110,8 +142,120 @@ void ofxTwitterStreamJSONParser::onTweet(ofxTwitterStreamTweetRaw &rTweet) {
 }
 
 
+{
+    "id_str": "15880683964604416",
+    "in_reply_to_screen_name": null,
+    "in_reply_to_user_id": null,
+    "text": "Wietse Havenaar liep door de bos en chillde hem hard, hij flikkerde met zijn face in de sneeuw en stierf.",
+    "in_reply_to_status_id_str": null,
+    "contributors": null,
+    "retweet_count": 0,
+    "in_reply_to_user_id_str": null,
+    
+	 "entities": {
+        "hashtags": [{
+            "text": "Leidsemarkt",
+            "indices": [101, 113]
+        },
+        {
+            "text": "kerstboodschappen",
+            "indices": [121, 139]
+        }],
+        "user_mentions": [],
+        "urls": []
+    },
+    "coordinates": {
+        "type": "Point",
+        "coordinates": [4.477062, 52.128959]
+    },
+    
+    "place": {
+        "country_code": "NL",
+        "place_type": "city",
+        "bounding_box": {
+            "type": "Polygon",
+            "coordinates": [
+                [
+                    [5.8955157, 50.8183644],
+                    [6.0263774, 50.8183644],
+                    [6.0263774, 50.936387],
+                    [5.8955157, 50.936387]
+                ]
+            ]
+        },
+        "attributes": {},
+        "full_name": "Heerlen, Limburg",
+        "name": "Heerlen",
+        "url": "http:\/\/api.twitter.com\/1\/geo\/id\/fec750e635427c4d.json",
+        "id": "fec750e635427c4d",
+        "country": "The Netherlands"
+    },
+    "retweeted": false,
+    "source": "web",
+    "in_reply_to_status_id": null,
+    "truncated": false,
+    "geo": null,
+    "user": {
+        "id_str": "165016961",
+        "follow_request_sent": null,
+        "lang": "en",
+        "profile_use_background_image": true,
+        "statuses_count": 1711,
+        "following": null,
+        "profile_background_color": "000000",
+        "profile_background_image_url": "http:\/\/a0.twimg.com\/profile_background_images\/178525836\/bannerfans_8776648.jpg",
+        "description": "I'm a dutch mc from The Lyric Collectors. \r\n\r\nwww.thelyriccollectors.hyves.nl support us yaw!",
+        "listed_count": 2,
+        "location": "Heerlen (Park City)",
+        "profile_text_color": "871f1f",
+        "followers_count": 85,
+        "verified": false,
+        "favourites_count": 1,
+        "profile_sidebar_fill_color": "000000",
+        "profile_image_url": "http:\/\/a1.twimg.com\/profile_images\/1188250502\/Rugged__nd_Raw_normal.jpg",
+        "profile_background_tile": false,
+        "time_zone": "Amsterdam",
+        "friends_count": 48,
+        "protected": false,
+        "is_translator": false,
+        "show_all_inline_media": false,
+        "geo_enabled": true,
+        "url": "http:\/\/www.kd045.hyves.nl",
+        "screen_name": "DamiannTLC",
+        "name": "Damiann.",
+        "contributors_enabled": false,
+        "created_at": "Sat Jul 10 10:43:00 +0000 2010",
+        "profile_link_color": "871f1f",
+        "id": 165016961,
+        "notifications": null,
+        "utc_offset": 3600,
+        "profile_sidebar_border_color": "871f1f"
+    },
+    "favorited": false,
+    "id": 15880683964604416,
+    "created_at": "Fri Dec 17 21:27:04 +0000 2010"
+}
+
 #include <string>
 using namespace std;
+
+
+struct ofxTwitterBoundingBox {
+	std::string	type;
+	std::map<float, float> coordinates;
+};
+
+struct ofxTwitterStreamPlace {
+	string country_code;
+	string place_type;
+	ofxTwitterBoundingBox bounding_box;
+	string full_name;
+	string url;
+	string id;
+	string country;
+};
+
+
 
 struct ofxTwitterStreamTweetUser {
 	bool notifications;
