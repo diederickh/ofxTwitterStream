@@ -1,7 +1,9 @@
 #include "ofxTwitterStreamJSONParser.h"
 
 
-ofxTwitterStreamJSONParser::ofxTwitterStreamJSONParser() {
+ofxTwitterStreamJSONParser::ofxTwitterStreamJSONParser(bool bLog)
+:log(bLog)
+{
 }
 
 void ofxTwitterStreamJSONParser::onTweet(ofxTwitterStreamTweetRaw &rTweet) {
@@ -27,11 +29,31 @@ void ofxTwitterStreamJSONParser::onTweet(ofxTwitterStreamTweetRaw &rTweet) {
 	tweet.contributors			= json.getValueI(root, "contributors",0);
 	tweet.in_reply_to_user_id	= json.getValueI(root, "in_reply_to_user_id", 0);
 	tweet.created_at			= json.getValueS(root, "created_at","0");
-	tweet.geo					= json.getValueS(root, "geo","");
+	
+	json_t* geo = json_object_get(root, "geo");
+	if(json_is_object(geo)) {
+		json_t* geo_coords = json_object_get(geo, "coordinates");
+		if(json_is_array(geo_coords)) {
+			if(json_array_size(geo_coords) == 2) {
+				std::cout << "tweet:" << rTweet.data << std::endl;
+				json_t* lng_json = json_array_get(geo_coords,0);
+				json_t* lat_json = json_array_get(geo_coords,1);
+				tweet.geo.x = json_real_value(lng_json);
+				tweet.geo.y = json_real_value(lat_json);
+				std::cout << "longitude:" << tweet.geo.x << std::endl;
+				std::cout << "latitude: " << tweet.geo.y << std::endl;
+	//			float lng = json.getValueF(lng_json,0);
+	//			float lat = json.getValueF(lat_json,1);
+				///printf("Long: %d, lat:%d, %d;%d\n", lng,lat,lng,lat);
+			}
+		} 
+	}
 
-	std::cout << "id: " << tweet.id_str << std::endl;
-	std::cout << "text: " << tweet.text << std::endl;
-	std::cout << "created_at: " << tweet.created_at << std::endl;
+	if(log) {
+		std::cout << "id: " << tweet.id_str << std::endl;
+		std::cout << "text: " << tweet.text << std::endl;
+		std::cout << "created_at: " << tweet.created_at << std::endl;
+	}
 	
 	// Get user specific data.
 	json_t* user = json_object_get(root, "user");
@@ -56,8 +78,12 @@ void ofxTwitterStreamJSONParser::onTweet(ofxTwitterStreamTweetRaw &rTweet) {
 		tweet.place.id			 = json.getValueS(place, "id",				"");
 		tweet.place.country		 = json.getValueS(place, "country",			"");
 		tweet.place.place_type	 = json.getValueS(place, "place_type",		"");				
-		std::cout << "place: " << tweet.place.name << std::endl;
 		
+		if(log) {
+			std::cout << "place: " << tweet.place.name << std::endl;
+			std::cout << "raw:\n" << rTweet.data << std::endl;
+		}
+
 		// Parse the bouding box.
 		ofxTwitterBoundingBox box;
 		json_t* bounding_box = json_object_get(place, "bounding_box");
@@ -92,6 +118,9 @@ void ofxTwitterStreamJSONParser::onTweet(ofxTwitterStreamTweetRaw &rTweet) {
 	
 	std::cout << "--------------------------------------" << std::endl;
 }
+
+// Format spec: http://dev.twitter.com/pages/tweet_entities
+
 
 /* Example data
 --------------------------------------------------------------------------------------------------------------------

@@ -145,7 +145,7 @@ struct ofxTwitterStreamTweet {
 	bool truncated;
 	string id;
 	string id_str;
-	string geo;
+	ofxTwitterCoordinate geo;
 	long in_reply_to_status_id;
 };
 #endif

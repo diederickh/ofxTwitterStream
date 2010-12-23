@@ -11,8 +11,9 @@
 
 class ofxTwitterStreamJSONParser : public ofxTwitterStreamEventListener {
 public:
-	ofxTwitterStreamJSONParser();
+	ofxTwitterStreamJSONParser(bool bLog = false);
 	virtual void onTweet(ofxTwitterStreamTweetRaw &rTweet);
 	ofxJansson json;
+	bool log;
 };
 #endif
