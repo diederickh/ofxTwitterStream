@@ -76,8 +76,46 @@ using namespace std;
         "id": "fec750e635427c4d",
         "country": "The Netherlands"
     },
+	
+	, "entities": {
+        "user_mentions": [],
+        "urls": [{
+            "indices": [46, 71],
+            "expanded_url": null,
+            "url": "http:\/\/twitpic.com\/3j58a2"
+        }],
+        "hashtags": []
+    },
 
 */
+
+
+struct ofxTwitterStreamURL {
+	ofxTwitterStreamURL(std::string sURL)
+		:url(sURL)
+	{
+	}
+	
+	std::string url;
+	/**
+	 * 0 - unknown
+	 * 1 - twitpic
+	 * 2 - foursquare
+	 */
+	int type;
+};
+
+struct ofxTwitterStreamURLs {
+	std::vector<ofxTwitterStreamURL> urls;
+	void add(std::string sURL) {
+		ofxTwitterStreamURL the_url(sURL);
+		urls.push_back(the_url);
+	}
+};
+
+struct ofxTwitterStreamEntities {
+	ofxTwitterStreamURLs urls;
+};
 
 struct ofxTwitterCoordinate {
 	double x;
@@ -125,7 +163,8 @@ struct ofxTwitterStreamTweetUser {
 	string name;
 	int favourites_count;
 	string screen_name;
-	long id;
+	uint64_t id;
+	string id_str;
 	int utc_offset;
 	string profile_text_color;
 };
@@ -143,9 +182,10 @@ struct ofxTwitterStreamTweet {
 	ofxTwitterStreamPlace place;
 	ofxTwitterStreamTweetUser user;
 	bool truncated;
-	string id;
+	uint64_t id;
 	string id_str;
 	ofxTwitterCoordinate geo;
 	long in_reply_to_status_id;
+	ofxTwitterStreamEntities entities;
 };
 #endif

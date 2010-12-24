@@ -12,18 +12,29 @@ void ofxTwitterStreamJSONParser::onTweet(ofxTwitterStreamTweetRaw &rTweet) {
 	json_error_t error;
 	json_t *root = json_loads(rTweet.data.c_str(),&error);
 	if(!root) {
+		
 		cout	<< "ERROR: Cannot load json from string at line: << "
 				<< error.line
 				<< ", "
 				<< error.text
 				<< "\n";
-
+		std::cout << "JSON STRING IS" <<std::endl;
+		std::cout << rTweet.data << std::endl;
 		return;
 	}
-	
+	//std::cout << rTweet.data << std::endl;
 	// Create and fill the ofxTwitterStreamTweet.
+	// ------------------------------------------
+	
+	// Get the tweet ID.
 	ofxTwitterStreamTweet tweet;
-	tweet.id_str				= json.getValueS(root, "id_str", "");  // does not work, getValueI neither..
+	stringstream id_stream;
+	id_stream << json.getValueS(root, "id_str", "0");
+	uint64_t tweet_id;
+	id_stream >> tweet_id;
+
+	tweet.id					= tweet_id;
+	tweet.id_str				= json.getValueS(root, "id_str", ""); 
 	tweet.text					= json.getValueS(root, "text", "");
 	tweet.favorited				= json.getValueB(root, "favorited", false);
 	tweet.contributors			= json.getValueI(root, "contributors",0);
@@ -35,16 +46,12 @@ void ofxTwitterStreamJSONParser::onTweet(ofxTwitterStreamTweetRaw &rTweet) {
 		json_t* geo_coords = json_object_get(geo, "coordinates");
 		if(json_is_array(geo_coords)) {
 			if(json_array_size(geo_coords) == 2) {
-				std::cout << "tweet:" << rTweet.data << std::endl;
 				json_t* lng_json = json_array_get(geo_coords,0);
 				json_t* lat_json = json_array_get(geo_coords,1);
 				tweet.geo.x = json_real_value(lng_json);
 				tweet.geo.y = json_real_value(lat_json);
 				std::cout << "longitude:" << tweet.geo.x << std::endl;
 				std::cout << "latitude: " << tweet.geo.y << std::endl;
-	//			float lng = json.getValueF(lng_json,0);
-	//			float lat = json.getValueF(lat_json,1);
-				///printf("Long: %d, lat:%d, %d;%d\n", lng,lat,lng,lat);
 			}
 		} 
 	}
@@ -55,6 +62,43 @@ void ofxTwitterStreamJSONParser::onTweet(ofxTwitterStreamTweetRaw &rTweet) {
 		std::cout << "created_at: " << tweet.created_at << std::endl;
 	}
 	
+	// Get entitires
+	json_t* entities = json_object_get(root, "entities");
+	if(json_is_object(entities)) {
+		json_t* urls = json_object_get(entities, "urls");
+		if(json_is_array(urls)) {
+			int size = json_array_size(urls);
+			for(int i = 0; i < size; ++i) {
+				json_t* url_entry = json_array_get(urls, i);
+				std::string the_url = json.getValueS(url_entry, "url","");
+				if(the_url != "") {
+					tweet.entities.urls.add(the_url);
+				}
+			}
+
+		}
+	}
+	/*
+	  "entities": {
+        "hashtags": [{
+            "text": "Leidsemarkt",
+            "indices": [101, 113]
+        },
+        {
+            "text": "kerstboodschappen",
+            "indices": [121, 139]
+        }],
+        "user_mentions": [],
+        "urls": [{
+            "indices": [46, 71],
+            "expanded_url": null,
+            "url": "http:\/\/twitpic.com\/3j58a2"
+        }],
+
+    },
+
+	*/
+	
 	// Get user specific data.
 	json_t* user = json_object_get(root, "user");
 	if(json_is_object(user)) {
@@ -64,6 +108,7 @@ void ofxTwitterStreamJSONParser::onTweet(ofxTwitterStreamTweetRaw &rTweet) {
 		tweet.user.lang					= json.getValueS(user, "lang", "");
 		tweet.user.time_zone			= json.getValueS(user, "time_zone","");
 		tweet.user.utc_offset			= json.getValueI(user, "utc_offset",0);
+		tweet.user.id_str				= json.getValueS(user, "id_str","-1");
 	}
 		
 	// Get place information.
@@ -197,7 +242,15 @@ void ofxTwitterStreamJSONParser::onTweet(ofxTwitterStreamTweetRaw &rTweet) {
         "type": "Point",
         "coordinates": [4.477062, 52.128959]
     },
-    
+    , "entities": {
+        "user_mentions": [],
+        "urls": [{
+            "indices": [46, 71],
+            "expanded_url": null,
+            "url": "http:\/\/twitpic.com\/3j58a2"
+        }],
+        "hashtags": []
+    },
     "place": {
         "country_code": "NL",
         "place_type": "city",

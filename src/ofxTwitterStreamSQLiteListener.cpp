@@ -48,7 +48,8 @@ ofxTwitterStreamTweet ofxTwitterStreamSQLiteListener::getNextTweet() {
 		.execute().begin();
 	ofxTwitterStreamTweet tweet;
 	tweet.text = sel.getString(0);
-	tweet.id = sel.getString(1);
+	// @todo make this a long! 
+	//tweet.id = sel.getString(1);
 	tweet.user.screen_name = sel.getString(2);
 	tweet.user.profile_image_url = sel.getString(3);
 	return tweet;
@@ -80,7 +81,8 @@ ofxTwitterStreamTweet ofxTwitterStreamSQLiteListener::getRandomTweet() {
 		.execute().begin();
 	ofxTwitterStreamTweet tweet;
 	tweet.text = sel.getString(0);
-	tweet.id = sel.getString(1);
+	// @todo make this a long
+	//tweet.id = sel.getString(1);
 	tweet.user.screen_name = sel.getString(2);
 	tweet.user.profile_image_url = sel.getString(3);
 	return tweet;
