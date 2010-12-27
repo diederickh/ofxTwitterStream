@@ -18,8 +18,8 @@ void ofxTwitterStreamJSONParser::onTweet(ofxTwitterStreamTweetRaw &rTweet) {
 				<< ", "
 				<< error.text
 				<< "\n";
-		std::cout << "JSON STRING IS" <<std::endl;
-		std::cout << rTweet.data << std::endl;
+		//std::cout << "JSON STRING IS" <<std::endl;
+		//std::cout << rTweet.data << std::endl;
 		return;
 	}
 	//std::cout << rTweet.data << std::endl;
@@ -160,8 +160,8 @@ void ofxTwitterStreamJSONParser::onTweet(ofxTwitterStreamTweetRaw &rTweet) {
 	}
 	client->notifyTweet(tweet);
 	json_decref(root);
-	
-	std::cout << "--------------------------------------" << std::endl;
+	if(log)
+		std::cout << "--------------------------------------" << std::endl;
 }
 
 // Format spec: http://dev.twitter.com/pages/tweet_entities
