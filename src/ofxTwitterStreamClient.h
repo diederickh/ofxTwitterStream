@@ -46,9 +46,13 @@ class ofxTwitterStreamClient {
 			,const string sUser
 			,const string sPassword
 		);
+		
+		~ofxTwitterStreamClient();
 
 		void connect();
-
+		
+		void disconnect();
+		
 		void handleResolve(
 			const boost::system::error_code& oError
 			,tcp::resolver::iterator oEndPointIterator

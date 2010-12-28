@@ -49,8 +49,10 @@ Representing:
 	"in_reply_to_status_id": null
 */
 
+#include <iostream>
 #include <string>
 #include <vector>
+#include <map>
 
 using namespace std;
 
@@ -89,20 +91,63 @@ using namespace std;
 
 */
 
+enum OFX_TWEET_URL {
+	 OFXTWEET_URL_TWITPIC
+	,OFXTWEET_URL_FOURSQUARE
+	,OFXTWEET_URL_YFROG
+	,OFXTWEET_URL_INSTAGRAM
+};
+typedef std::vector<std::string> ofxTweetKeywords;
+typedef std::pair<OFX_TWEET_URL, ofxTweetKeywords > ofxTweetURLKeywords;
+typedef std::map<OFX_TWEET_URL, ofxTweetKeywords > ofxTweetURLMap;
 
 struct ofxTwitterStreamURL {
 	ofxTwitterStreamURL(std::string sURL)
 		:url(sURL)
 	{
+		findType();
+	}
+	
+	void setURL(std::string sURL) {
+		url = sURL;
+		findType();
+	}
+	
+	void findType() {
+		ofxTweetURLMap keywords;
+		
+		// define the keywords we want to match on.
+		ofxTweetKeywords yfrog, twitpic, sq, insta;
+		yfrog.push_back("yfrog");
+		twitpic.push_back("twitpic");
+		sq.push_back("sq.com");
+		insta.push_back("instagr.am");
+		
+		// create our big map of keywords<-> url type pairs.
+		keywords.insert(ofxTweetURLKeywords(OFXTWEET_URL_YFROG, yfrog));
+		keywords.insert(ofxTweetURLKeywords(OFXTWEET_URL_TWITPIC, twitpic));	
+		keywords.insert(ofxTweetURLKeywords(OFXTWEET_URL_FOURSQUARE, sq));	
+		keywords.insert(ofxTweetURLKeywords(OFXTWEET_URL_FOURSQUARE, insta));		
+		
+		// now just iterator over all the keywords.
+		ofxTweetURLMap::iterator it = keywords.begin();
+		while(it != keywords.end()) {
+			ofxTweetKeywords::iterator key_it = (it->second).begin();
+			while(key_it != it->second.end()) {
+				size_t f = url.find((*key_it));
+				if(f != std::string::npos) {
+					type = (it->first);
+					return;
+					//std::cout << "Found: " << (*key_it) <<", type:" << type  << " in: " << url << std::endl;
+				}
+				++key_it;
+			}
+			++it;
+		}
 	}
 	
 	std::string url;
-	/**
-	 * 0 - unknown
-	 * 1 - twitpic
-	 * 2 - foursquare
-	 */
-	int type;
+	OFX_TWEET_URL type;
 };
 
 struct ofxTwitterStreamURLs {
@@ -114,6 +159,7 @@ struct ofxTwitterStreamURLs {
 };
 
 struct ofxTwitterStreamEntities {
+	// The enties can be more then just urls.
 	ofxTwitterStreamURLs urls;
 };
 
@@ -171,6 +217,11 @@ struct ofxTwitterStreamTweetUser {
 
 struct ofxTwitterStreamTweet {
 	ofxTwitterStreamTweet():text(""){}
+
+	std::vector<ofxTwitterStreamURL>& getURLs() {
+		return entities.urls.urls;
+	}
+
 	int contributors;
 	string text;
 	bool favorited;

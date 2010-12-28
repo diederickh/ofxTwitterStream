@@ -20,8 +20,17 @@ ofxTwitterStreamClient::ofxTwitterStreamClient(
 	,application_name("ofxTwitterStream")
 {
 	cout << "Creating ofxTwitterStream client\n";
-
 	event_manager = new ofxTwitterStreamEventManager(this);
+}
+
+ofxTwitterStreamClient::~ofxTwitterStreamClient() {
+	std::cout << "~~~ ofxTwitterStreamClient()" << std::endl;
+	disconnect();
+	delete event_manager;
+}
+
+void ofxTwitterStreamClient::disconnect() {
+	sock.close();
 }
 
 void ofxTwitterStreamClient::connect() {

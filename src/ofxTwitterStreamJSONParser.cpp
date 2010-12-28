@@ -45,13 +45,17 @@ void ofxTwitterStreamJSONParser::onTweet(ofxTwitterStreamTweetRaw &rTweet) {
 	if(json_is_object(geo)) {
 		json_t* geo_coords = json_object_get(geo, "coordinates");
 		if(json_is_array(geo_coords)) {
+			// interesting: http://dev.twitter.com/doc/get/geo/reverse_geocode
 			if(json_array_size(geo_coords) == 2) {
 				json_t* lng_json = json_array_get(geo_coords,0);
 				json_t* lat_json = json_array_get(geo_coords,1);
 				tweet.geo.x = json_real_value(lng_json);
 				tweet.geo.y = json_real_value(lat_json);
-				std::cout << "longitude:" << tweet.geo.x << std::endl;
-				std::cout << "latitude: " << tweet.geo.y << std::endl;
+				
+				if(log) {
+					std::cout << "longitude:" << tweet.geo.x << std::endl;
+					std::cout << "latitude: " << tweet.geo.y << std::endl;
+				}
 			}
 		} 
 	}
@@ -62,7 +66,7 @@ void ofxTwitterStreamJSONParser::onTweet(ofxTwitterStreamTweetRaw &rTweet) {
 		std::cout << "created_at: " << tweet.created_at << std::endl;
 	}
 	
-	// Get entitires
+	// Get entities
 	json_t* entities = json_object_get(root, "entities");
 	if(json_is_object(entities)) {
 		json_t* urls = json_object_get(entities, "urls");
@@ -75,7 +79,6 @@ void ofxTwitterStreamJSONParser::onTweet(ofxTwitterStreamTweetRaw &rTweet) {
 					tweet.entities.urls.add(the_url);
 				}
 			}
-
 		}
 	}
 	/*

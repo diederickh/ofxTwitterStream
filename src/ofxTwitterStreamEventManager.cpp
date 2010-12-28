@@ -15,6 +15,7 @@ void ofxTwitterStreamEventManager::notifyTweet(
 ) 
 {
 	tweet_event.notify(sender,oTweet);
+
 }
 
 void ofxTwitterStreamEventManager::notifyTweet(
@@ -29,6 +30,5 @@ void ofxTwitterStreamEventManager::addListener(
 )
 {
 	tweet_raw_event += Poco::Delegate<ofxTwitterStreamEventListener, ofxTwitterStreamTweetRaw>(pListener, &ofxTwitterStreamEventListener::onTweet);
-//	tweet_raw_event += Poco::Delegate<ofxTwitterStreamEventListener, ofxTwitterStreamTweetRaw>(pListener, &ofxTwitterStreamEventListener::onTweet);
 	tweet_event += Poco::Delegate<ofxTwitterStreamEventListener, ofxTwitterStreamTweet>(pListener, &ofxTwitterStreamEventListener::onTweet);
 }
