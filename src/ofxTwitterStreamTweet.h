@@ -102,6 +102,7 @@ typedef std::pair<OFX_TWEET_URL, ofxTweetKeywords > ofxTweetURLKeywords;
 typedef std::map<OFX_TWEET_URL, ofxTweetKeywords > ofxTweetURLMap;
 
 struct ofxTwitterStreamURL {
+	ofxTwitterStreamURL(){}
 	ofxTwitterStreamURL(std::string sURL)
 		:url(sURL)
 	{
