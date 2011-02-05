@@ -91,15 +91,15 @@ using namespace std;
 
 */
 
-enum OFX_TWEET_URL {
+enum OFXTWEET_URL {
 	 OFXTWEET_URL_TWITPIC
 	,OFXTWEET_URL_FOURSQUARE
 	,OFXTWEET_URL_YFROG
 	,OFXTWEET_URL_INSTAGRAM
 };
 typedef std::vector<std::string> ofxTweetKeywords;
-typedef std::pair<OFX_TWEET_URL, ofxTweetKeywords > ofxTweetURLKeywords;
-typedef std::map<OFX_TWEET_URL, ofxTweetKeywords > ofxTweetURLMap;
+typedef std::pair<OFXTWEET_URL, ofxTweetKeywords > ofxTweetURLKeywords;
+typedef std::map<OFXTWEET_URL, ofxTweetKeywords > ofxTweetURLMap;
 
 struct ofxTwitterStreamURL {
 	ofxTwitterStreamURL(){}
@@ -148,7 +148,7 @@ struct ofxTwitterStreamURL {
 	}
 	
 	std::string url;
-	OFX_TWEET_URL type;
+	OFXTWEET_URL type;
 };
 
 struct ofxTwitterStreamURLs {
