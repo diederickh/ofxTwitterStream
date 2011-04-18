@@ -10,7 +10,7 @@ void ofxTwitterStreamJSONParser::onTweet(ofxTwitterStreamTweetRaw &rTweet) {
 	// construct the parser: whenever a message has a carriage return
 	// the twitter streaming api breaks!
 	json_error_t error;
-	json_t *root = json_loads(rTweet.data.c_str(),&error);
+	json_t *root = json_loads(rTweet.data.c_str(),0, &error);
 	if(!root) {
 		
 		cout	<< "ERROR: Cannot load json from string at line: << "

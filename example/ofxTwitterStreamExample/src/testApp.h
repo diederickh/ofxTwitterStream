@@ -10,6 +10,7 @@
 class testApp : public ofBaseApp, ofxTwitterStreamEventListener { // note we implement the twitter event listener.
 
 	public:
+		~testApp();
 		void setup();
 		void update();
 		void draw();

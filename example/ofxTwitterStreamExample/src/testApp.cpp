@@ -29,6 +29,11 @@ void testApp::setup(){
 	twitter_thread->start();
 }
 
+// Must nicely shutdown...
+testApp::~testApp() {
+	twitter_thread->stop();
+}
+
 void testApp::onTweet(ofxTwitterStreamTweet& rTweet) {
 	cout << "From: " << rTweet.user.screen_name << endl;
 	cout << "ID: " << rTweet.user.id_str << endl;
