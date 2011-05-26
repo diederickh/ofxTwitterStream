@@ -4,7 +4,7 @@
 	<author>Diederick Huijbers</author>
 
 	<description><![CDATA[Addon to connect to the twitter streaming server which 
-	allows you to listen to new tweets in real time..]]></description>
+	allows you to listen to new tweets in real time.]]></description>
 	
 	<author_website>http://www.roxlu.com</author_website>
 	<code_url>https://github.com/roxlu/ofxTwitterStream</code_url>
