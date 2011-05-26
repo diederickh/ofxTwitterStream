@@ -1,0 +1,15 @@
+ofxTwitterStream - supersimple branch
+=====================================
+This is basically the a bare and very simple
+to use version of ofxTwitterStream and much more
+in the spirit of OF "keeping it simple". 
+
+How to install - only tested on Mac, XCode 4, with latest of-git version (may 2011)
+=========================================
+- tested on Mac, XCode 4
+- using latest openFrameworks from GitHub (may 2011)
+
+1) create a new group in your project 
+2) draw and drop the "src" directory into this group
+
+That's it!
