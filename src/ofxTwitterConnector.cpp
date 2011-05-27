@@ -200,8 +200,19 @@ void ofxTwitterConnector::parseTweetJSON(string sJSON) {
 	}
 	string profile_image = json_string_value(node);
 	tweet.setAvatar(profile_image);
+	
+	// user: id
+	node = json_object_get(user, "id_str");
+	if(!json_is_string(node)) {
+		ofLog(OF_LOG_ERROR, "error: cannot get user id");
+		return;
+	}
+	string user_id = json_string_value(node);
+	tweet.setUserID(user_id);
+
+	// store tweet.
 	lock.writeLock();
-	tweets.push_back(tweet);
+		tweets.push_back(tweet);
 	lock.unlock();
 }
 
