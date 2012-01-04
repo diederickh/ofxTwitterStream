@@ -2,6 +2,7 @@
 
 ofxTwitterConnector::ofxTwitterConnector() 
 :is_connected(false)
+,socket_ptr(NULL)
 {
 }
 
@@ -22,6 +23,7 @@ void ofxTwitterConnector::run() {
 	string encoded = modp::b64_encode(username +":" +password);
 	Poco::Net::SocketAddress sa(server,80);
 	Poco::Net::StreamSocket socket(sa);
+	socket_ptr = &socket;
 	Poco::Net::SocketStream str(socket);
 	str << "GET " << filter << " HTTP/1.0\r\n";
 	str << "Host: " << server << "\r\n";
@@ -32,13 +34,19 @@ void ofxTwitterConnector::run() {
 	str.flush();
 	char ch;
 	vector<char> buffer;	
-	while(true) {
+	while(str) {
 		str.read(&ch, 1);
 		buffer.push_back(ch);
 		if(ch == '\r') {
 			parseBuffer(buffer);		
 			buffer.clear();
 		}
+	}
+}
+
+void ofxTwitterConnector::stop() {
+	if(socket_ptr != NULL) {
+		socket_ptr->shutdown();
 	}
 }
 
@@ -61,7 +69,7 @@ void ofxTwitterConnector::parseBuffer(vector<char> sBuffer) {
 				is_connected = true;
 			}
 			else {
-				ofLog(OF_LOG_ERROR,"unhandled http result: '%s' ", vec[2].c_str());
+				cout << "unhandled http result: " << vec[2] << endl;
 			}
 		}
 	
@@ -154,14 +162,14 @@ void ofxTwitterConnector::parseTweetJSON(string sJSON) {
 	// load json.
 	root = json_loads(sJSON.c_str(), 0, &error);
 	if(!root) {
-		ofLog(OF_LOG_ERROR, "error: on line:%d %s", error.line, error.text);
+		cout <<  "error: on line:" << error.line << ", " << error.text << endl;
 		return;
 	}
 	
 	// text
 	json_t* node =	json_object_get(root, "text");
 	if(!json_is_string(node)) {
-		ofLog(OF_LOG_ERROR, "error: cannot get text from tweet");
+		cout << "error: cannot get text from tweet" << endl;
 		return;
 	}
 	string text = json_string_value(node);
@@ -170,7 +178,7 @@ void ofxTwitterConnector::parseTweetJSON(string sJSON) {
 	// id_str
 	node = json_object_get(root, "id_str");
 	if(!json_is_string(node)) {
-		ofLog(OF_LOG_ERROR, "error: cannot get id_str from tweet");
+		cout <<  "error: cannot get id_str from tweet" << endl;
 		return;
 	}	
 	string id = json_string_value(node);
@@ -179,14 +187,14 @@ void ofxTwitterConnector::parseTweetJSON(string sJSON) {
 	// user - object
 	json_t* user = json_object_get(root, "user");
 	if(!json_is_object(user)) {
-		ofLog(OF_LOG_ERROR, "error: cannot get user node from tweet");
+		cout << "error: cannot get user node from tweet" << endl;
 		return;
 	}
 	
 	// user: screen name
 	node = json_object_get(user, "screen_name");
 	if(!json_is_string(node)) {
-		ofLog(OF_LOG_ERROR, "error: cannot get user screen_name");
+		cout << "error: cannot get user screen_name" << endl;
 		return;
 	}
 	string screen_name = json_string_value(node);
@@ -195,7 +203,7 @@ void ofxTwitterConnector::parseTweetJSON(string sJSON) {
 	// user: avatar
 	node = json_object_get(user, "profile_image_url");
 	if(!json_is_string(node)) {
-		ofLog(OF_LOG_ERROR, "error: cannot get profile_image_url");
+		cout << "error: cannot get profile_image_url" << endl;
 		return;
 	}
 	string profile_image = json_string_value(node);
@@ -204,7 +212,7 @@ void ofxTwitterConnector::parseTweetJSON(string sJSON) {
 	// user: id
 	node = json_object_get(user, "id_str");
 	if(!json_is_string(node)) {
-		ofLog(OF_LOG_ERROR, "error: cannot get user id");
+		cout << "error: cannot get user id" << endl;
 		return;
 	}
 	string user_id = json_string_value(node);

@@ -1,5 +1,7 @@
-	#pragma once
-#include "ofMain.h"
+#pragma once
+//include "ofMain.h"
+#include <string>
+using namespace std;
 class ofxTweet {
 public: 
 	ofxTweet();

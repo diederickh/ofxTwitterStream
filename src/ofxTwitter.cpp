@@ -3,6 +3,7 @@ ofxTwitter::ofxTwitter() {
 }
 
 ofxTwitter::~ofxTwitter() {
+	connector.stop();
 	thread.join();
 }
 

@@ -1,8 +1,9 @@
 #pragma once
-
-#include "ofMain.h"
+#include <string>
+#include <Poco/Thread.h>
 #include "ofxTwitterConnector.h"
 #include "ofxTweet.h"
+using namespace std;
 
 class ofxTwitter {
 public:

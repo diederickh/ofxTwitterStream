@@ -1,5 +1,7 @@
 #pragma once 
-#include "ofMain.h"
+#include <string>
+#include <deque>
+#include <iostream>
 #include "Poco/Thread.h"
 #include "Poco/Runnable.h"
 #include "Poco/Net/SocketAddress.h"
@@ -12,6 +14,8 @@
 #include "modp_b64.h"
 #include "jansson.h"
 #include "ofxTweet.h"
+
+using namespace std;
 
 class ofxTwitterConnector : public Poco::Runnable {
 public:
@@ -28,8 +32,9 @@ public:
 	void parseTweetJSON(string sLine);
 	bool hasNewTweets();
 	ofxTweet getNextTweet();
-	
+	void stop();
 private:
+	Poco::Net::StreamSocket* socket_ptr;
 	string username;
 	string password;
 	string server;
